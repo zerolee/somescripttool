@@ -1,0 +1,125 @@
+#!/bin/bash
+# Program:
+#  This program shows 
+# History:
+# 2017-05-19 zmqc First release
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+
+################################
+# 变量定义区
+################################
+
+vms=$(VBoxManage list runningvms)
+existvms=$(VBoxManage list runningvms|sed 's/.*{//g'|sed 's/}//g')
+statvms=$(VBoxManage showvminfo centos|grep -i state|cut -d':' -f2|awk  '{print $1}')
+
+
+
+
+################################
+# 函数定义区
+################################
+# 开机
+function boot() {
+    if [ "${existvms}" != "0592da30-e8fa-4168-811e-e8cde33b19a3" ]; then
+	echo "boot..."
+	VBoxManage startvm centos -type headless &> /dev/null
+	while [ "${existvms}" != "0592da30-e8fa-4168-811e-e8cde33b19a3" ] 
+	do
+            sleep 1
+	    existvms=$(VBoxManage list runningvms|sed 's/.*{//g'|sed 's/}//g')
+	done
+    fi
+}
+
+# 虚拟机信息
+function info() {
+    echo "vms info: "${vms:-"没有虚拟机"}
+}
+
+# 远程链接
+function connect() {
+    echo "connect..."
+    ssh 192.168.56.1
+}
+
+
+# 测试是否可以连接
+function testip() {
+    if [ "${existvms}" != "0592da30-e8fa-4168-811e-e8cde33b19a3" ]; then
+	echo "虚拟机未启动"
+	exit 0
+    fi    
+
+    result="1"
+    while [ "${result}" != "0" ]
+    do      
+        ping -c 1 -w 1 192.168.56.1 &> /dev/null && result=0 || result=1
+	sleep 1
+    done
+    success="虚拟机已经启动"
+}
+
+# 帮助信息
+function help() {
+    echo -e "     help  ( 查看 mycentos 的参数介绍 )\n     ls    ( 查看有哪些虚拟机 ) \n     boot  ( 启动虚拟机 )\n     ssh   ( 用ssh进行远程连接 )\n     status( 查看虚拟机是否启动 )\n     ping  ( ping 一下虚拟机的网络 )\n     pause ( 暂停虚拟机 )\n     resume( 恢复暂停虚拟机 )\n     ss    ( savestate 保存状态然后关闭 )"
+}
+
+
+################################
+# 主程序区
+################################
+# 不带任何参数则直接启动
+if [ $# == 0 ]; then
+        boot
+	testip
+	# 网络可以连通后，ssh 服务还没有完全启动
+	if [ "${statvms}" == "powered" ]; then
+	    sleep 5
+	fi
+	connect
+	exit
+elif [ $# != 1 ]; then
+     echo  "     本程序不接受参数或者只接收一个参数, 参数列表如下："
+     help
+     exit
+fi
+
+
+# 针对不同参数进行处理
+case $1 in
+    "help")
+	help
+	;;
+    "ls")
+	info
+	;;
+    "boot")
+	boot
+	;;
+    "ssh")
+	connect
+	;;
+    "ping")
+	ping -c 1 -w 1 192.168.56.1
+	;;
+    "status")
+	testip
+	echo $success
+	;;
+    "pause")
+        VBoxManage controlvm centos pause
+	;;
+    "resume")
+        VBoxManage controlvm centos resume
+        ;;
+    "ss")
+	VBoxManage controlvm centos savestate
+	;;
+    *)
+	echo "     参数错误"
+	echo "     本程序不接受参数或者只接收一个参数, 参数列表如下："
+	help
+        ;;
+esac

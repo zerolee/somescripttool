@@ -1,0 +1,48 @@
+#!/bin/bash
+# Program:
+#  This program shows 
+# History:
+# 2017-05-18 zmqc First release
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+# history.log 这个文件好像会每隔一个月进行自动打包处理
+# FS 输入字段分隔符 
+# IGNORECASE 控制大小写敏感 0（大小写敏感）
+# NF 当前记录中的字段个数
+# NR 已经读出的记录数
+# OFS 输出字段分隔符 
+# ORS 输出的记录分隔符
+# RS 输入的记录的分隔符
+
+function apt_history() {
+    var=$1
+    shift
+    eval $var | awk  \
+'BEGIN{FS="\n"; RS=""; ORS="\n";          
+          split("'"$*"'", store, " ");    
+}                                       
+IGNORECASE=1{                            
+      if ( search() == 1 ) {              
+             print_result();              
+      }                                   
+ }                                        
+function search(){                       
+     for (i in store) {                   
+         if ($0!~store[i]) {              
+            return 0;                     
+         }                                
+     }                                    
+     return 1;                            
+ }
+function print_result(){
+       print $2
+       for(i=4; i<NF; i++){
+	     print $i
+       }
+       sub(/End-Date/, "Date", $NF);
+       print $NF "\n"
+}'
+}
+
+apt_history "find /var/log/apt/ -name history*|grep gz|sort -t '.' -k 3 -r -n|xargs zcat" "$*"
+apt_history "cat /var/log/apt/history.log" "$*"

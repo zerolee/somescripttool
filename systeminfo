@@ -1,0 +1,29 @@
+#!/bin/bash
+# Program:
+#  This program shows 
+# History:
+# 2017-05-18 zmqc First release
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+function GPU() {
+    lspci|grep -i 'VGA'|cut -d':' -f3
+}
+
+
+
+echo "Static hostname:"     `hostname`
+echo "         Kernel:"     `uname -r`
+echo "    Description:"     `lsb_release -d | awk '{print $2 "\t" $3 " " $4 "  " $5}'`
+echo "          Shell:"     `echo "Bash" ${BASH_VERSION%(*}`
+echo "             DE:"     `echo $XDG_CURRENT_DESKTOP`
+echo "            CPU:"     `awk -F ':' '/name/{print $2}' /proc/cpuinfo|sed  -r '1s/^ +//g' | head -1`
+echo "            GPU:"     `GPU|grep -i intel`
+echo "            GPU:"     `GPU|grep -i 'amd'`
+echo "            Time"     `w|awk 'NR==1{print $1}'`
+echo "          Uptime"     `w|awk 'NR==1{print $3}'|sed 's/,//g'`
+echo "           IPV4:"     `ifconfig wlp9s0|awk '/\<inet\>/{print $2}'`
+echo "           IPV6:"     `ifconfig wlp9s0|awk '/\<inet6\>/{print $2}'`
+echo "            MAC:"     `ifconfig wlp9s0|awk '/\<ether\>/{print $2}'`
+echo "            RAM:"     `free -h | awk '/Mem/{print $3 "/" $2}'`
+echo "           SWAP:"     `free -h | awk '/Swap/{print $3 "/" $2}'`
+
