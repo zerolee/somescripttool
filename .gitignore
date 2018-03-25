@@ -5,3 +5,5 @@ development
 firefox
 fzf
 you-get
+!mycentos-completion.sh
+!video-completion.sh
