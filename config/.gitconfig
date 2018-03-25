@@ -1,0 +1,12 @@
+[user]
+	name = zerolee
+	email = zmqclee@gmail.com
+	signingkey = 44475137ED1BA8973D4B59E642D7C3FE2A13B579
+[core]
+	autocrlf = input
+	safecrlf = true
+	editor = vi
+[alias]
+        hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+[merge]
+	tool = vimdiff
