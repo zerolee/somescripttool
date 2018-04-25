@@ -7,3 +7,5 @@ fzf
 you-get
 !mycentos-completion.sh
 !video-completion.sh
+!rg.sh
+!emacs.sh
