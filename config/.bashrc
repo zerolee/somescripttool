@@ -114,9 +114,9 @@ export GTK_IM_MODULE=fcitx
 
 alias ll='ls -l'
 alias emacs='emacs -nw'
-alias vi='EMACS_START="emacs_start" emacs -nw -Q -f menu-bar-mode'
 ###alias vi='emacs -nw'
-export EDITOR='EMACS_START="emacs_start" emacs -nw -Q -f menu-bar-mode'
+###export EDITOR='EMACS_START="emacs_start" emacs -nw -Q -f menu-bar-mode'
+export EDITOR='emacsclient -t'
 
 
 #swap the Ctrl and CapLocks
@@ -149,6 +149,11 @@ then
     #     tmux new-session -s network -d
     #     tmux send-keys -t network 'networkautostart' C-m
     #fi
+    tmux has-session -t emacsclient &> /dev/null
+    if [ $? != 0 ]; then
+	tmux new-session -s emacsclient -d
+	tmux send-keys -t emacsclient '/usr/local/bin/emacs -f server-start -nw' C-m
+    fi
     mylocation=$(tty|cut -d'/' -f3)
     if [ "$mylocation" == "pts" ]; then
         tmux
@@ -165,6 +170,7 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias myip="/sbin/ifconfig wlp9s0|awk '/inet/{print \$2}'"
 alias e="emacs -q -l ~/tmp/test/tmp/terminal.elc"
+alias vi="emacsclient -t"
 
 #if [ $PWD == $HOME ]; then
 #    export PS1="\u@\h:\w\$ "
