@@ -163,10 +163,10 @@ function gif() {
 }
 
 # 参数分别为时间和输出名字
-function byzan_record() {
+function byzanz_record() {
     # duration 就是时长，x 和 y 就是坐标，截取画面左上角的值，
     # width 和 height 就是截取画面的寛和高，也就是画面的大小，最后就是输出文件的名字。
-    output="byzan_record.gif"
+    output="byzanz_record.gif"
     if [ $# == 2 ]; then
 	output=$2
     fi
@@ -207,7 +207,7 @@ function help() {
               作用：将视频转换 gif"
     echo -e "gif:          video gif  [output.gif]
               作用：录制 gif"
-    echo -e "byzan_record: video byzan_record duration [output.gif]
+    echo -e "byzanz_record: video byzanz_record duration [output.gif]
               duration 是需要录制的时间
               作用：使用 byzanz 录制 gif
               该参数无效时尝试 apt install byzanz"
@@ -239,9 +239,9 @@ case $1 in
 	shift
 	record $@
 	;;
-    "byzan_record")
+    "byzanz_record")
 	shift
-	byzan_record $@
+	byzanz_record $@
 	;;
     "count_time")
 	shift
