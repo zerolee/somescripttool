@@ -149,10 +149,10 @@ then
     #     tmux new-session -s network -d
     #     tmux send-keys -t network 'networkautostart' C-m
     #fi
-    tmux has-session -t emacsclient &> /dev/null
+    tmux has-session -t emacsserver &> /dev/null
     if [ $? != 0 ]; then
-	tmux new-session -s emacsclient -d
-	tmux send-keys -t emacsclient '/usr/local/bin/emacs -f server-start -nw' C-m
+	tmux new-session -s emacsserver -d
+	tmux send-keys -t emacsserver '/usr/local/bin/emacs -f server-start -nw' C-m
     fi
     mylocation=$(tty|cut -d'/' -f3)
     if [ "$mylocation" == "pts" ]; then
