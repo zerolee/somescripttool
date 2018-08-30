@@ -5,7 +5,7 @@
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
-      *) return;;
+    *) return;;
 esac
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -47,12 +47,12 @@ esac
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+        # We have color support; assume it's compliant with Ecma-48
+        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+        # a case would tend to support setf rather than setaf.)
+        color_prompt=yes
     else
-	color_prompt=
+        color_prompt=
     fi
 fi
 
@@ -65,11 +65,11 @@ unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
+    xterm*|rxvt*)
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+        ;;
+    *)
+        ;;
 esac
 
 # enable color support of ls and also add handy aliases
@@ -102,15 +102,15 @@ fi
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+        . /usr/share/bash-completion/bash_completion
+    elif [ -f /etc/bash_completion ]; then
+        . /etc/bash_completion
+    fi
 fi
 export GTK_IM_MODULE=fcitx
-  export XMODIFIERS=@im=fcitx
-  export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export QT_IM_MODULE=fcitx
 
 alias ll='ls -l'
 alias emacs='emacs -nw'
@@ -134,8 +134,8 @@ alias grun='java org.antlr.v4.gui.TestRig'
 
 
 if [ ! -z "$TMUX" ]; then
-#    export TERM=xterm-256color
-#    tmux attach-session -t "$USER" || tmux new-session -s "$USER"
+    #    export TERM=xterm-256color
+    #    tmux attach-session -t "$USER" || tmux new-session -s "$USER"
     export PROMPT_COMMAND='tmux set -g status-right "#(whoami)@#h:#{pane_current_path}"'
 fi
 
@@ -151,15 +151,18 @@ then
     #fi
     tmux has-session -t emacsserver &> /dev/null
     if [ $? != 0 ]; then
-	tmux new-session -s emacsserver -d
-	tmux send-keys -t emacsserver '/usr/local/bin/emacs -f server-start -nw' C-m
+        tmux new-session -s emacsserver -d
+    fi
+    emacsclient -e '(server-running-p)' &> /dev/null
+    if [ $? != 0 ]; then
+        tmux send-keys -t emacsserver '/usr/local/bin/emacs -f server-start -nw' C-m
     fi
     mylocation=$(tty|cut -d'/' -f3)
     if [ "$mylocation" == "pts" ]; then
         tmux
-	exit
+        exit
     fi
-fi    
+fi
 
 
 
@@ -194,15 +197,15 @@ if [ "$EMACS_START" != "emacs_start" ]; then
     #　　　　35  45 紫红色
     #　　　　36  46 青蓝色
     #　　　　37  47 白色
-    
+
     # set completion-ignore-case on
     # set show-all-if-ambiguous on
     # bind TAB:menu-complete
     # 配置 autojump
     . /usr/share/autojump/autojump.sh
 
-    [ -f ~/.fzf.bash ] && source ~/.fzf.bash  
-fi  
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+fi
 
 
 [ -f ~/bin/mycentos-completion.sh ] && source ~/bin/mycentos-completion.sh
