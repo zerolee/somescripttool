@@ -173,7 +173,6 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias myip="/sbin/ifconfig wlp9s0|awk '/inet/{print \$2}'"
 alias e="emacsclient -t"
-alias vi="emacsclient -t"
 
 #if [ $PWD == $HOME ]; then
 #    export PS1="\u@\h:\w\$ "

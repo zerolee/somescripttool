@@ -1,0 +1,15 @@
+#!/bin/bash
+# Program:
+#  This program shows
+# History:
+# 2017-05-18 zmqc First release
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+filefile=`file $@`
+filename=${filefile##*symbolic* }
+if [ "$filename" == "$filefile" ]; then
+    truename=$@
+else
+    truename=$filename
+fi
+emacsclient -t $truename
