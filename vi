@@ -8,8 +8,6 @@ export PATH
 filefile=`file $@`
 filename=${filefile##*symbolic* }
 if [ "$filename" == "$filefile" ]; then
-    truename=$@
-else
-    truename=$filename
+    filename=$@
 fi
-emacsclient -t $truename
+emacsclient -t $filename
