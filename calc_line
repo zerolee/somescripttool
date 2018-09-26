@@ -1,0 +1,40 @@
+#!/bin/bash
+# Program:
+#  This program shows 
+# History:
+# 2017-05-18 zmqc First release
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+# 给出一个(或多个)目录，一个(或多个)文件类型，统计没有后缀的用 none
+
+
+#find . -name '*[ch]' -type f -exec wc -l {} \;|awk \
+#'BEGIN{line=0}{
+#    line += $1
+#}END{print line}'
+function calcline() {
+       eval $1 | awk \
+'BEGIN{line=0}{
+    line += $1
+}END{print line}'
+}
+
+case $1 in
+    "c")
+	calcline "find . -name '*[ch]' -type f -exec wc -l {} \;"
+	;;
+    "elisp")
+        calcline "find . -name '*el' -type f -exec wc -l {} \;"
+        ;;
+    "scm")
+        calcline "find . -name '*scm' -type f -exec wc -l {} \;"
+        ;;
+    "java")
+        calcline "find . -name '*java' -type f -exec wc -l {} \;"
+        ;;
+     "sh")
+        calcline "find . -name '*sh' -type f -exec wc -l {} \;"
+        ;;
+     *)
+        ;;
+esac
+
