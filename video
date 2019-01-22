@@ -192,6 +192,24 @@ function byzanz_record() {
     byzanz-record --duration=$1 $index $output
    
 }
+
+# 去除水印
+function remove_watermark() {
+    outputname="output.mp4"
+    inputname=$1
+    if [ "$#" == "2" ]; then
+	outputname=$2
+    fi
+    # 测试
+    while [ "${answer}" != "y" ]
+    do
+	read -p "x y w h: "  x y w h
+	ffplay -i $inputname -vf delogo=x=$x:y=$y:w=$w:h=$h:show=1
+	read -p "Please input[y/n] : " answer
+    done
+    # 通过
+    ffmpeg -i $inputname -vf delogo=x=$x:y=$y:w=$w:h=$h -acodec copy $outputname
+}
 # 帮助信息
 function help() {
     echo -e "help:         查看 video 的参数介绍, 加中括号表示参数可选 "
@@ -211,6 +229,8 @@ function help() {
               duration 是需要录制的时间
               作用：使用 byzanz 录制 gif
               该参数无效时尝试 apt install byzanz"
+    echo -e "remove_watermark: video remove_watermark input.mp4 [output.mp4]
+              x,y：水印的左上方坐标, w,h: 水印的宽高"
 }
 
 
@@ -246,6 +266,10 @@ case $1 in
     "count_time")
 	shift
 	count_time $@
+	;;
+    "remove_watermark")
+	shift
+	remove_watermark $@
 	;;
     *)
 	echo "        参数错误"

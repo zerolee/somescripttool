@@ -5,7 +5,7 @@ function _foo2() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    opts="help concat cut gif vgif record byzanz_record"
+    opts="help concat cut gif vgif record byzanz_record remove_watermark"
 
     COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
     
