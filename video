@@ -97,7 +97,7 @@ function cut_video() {
     ffmpeg -ss $start -t $count -i $inputname -vcodec copy -acodec copy $outputname
 }
 
-# 将视频h转换成 gif
+# 将视频转换成 gif
 function vgif() {
     palette="/tmp/palette.png"
     filters="fps=15,scale=768:-1:flags=lanczos"
@@ -189,7 +189,7 @@ function byzanz_record() {
     
 	       
     #byzanz-record --duration=$1 --x=100 --y=200 --width=700 --height=400 $output
-    byzanz-record --duration=$1 $index $output
+    byzanz-record --duration=$1 --delay=3 -v $index $output
    
 }
 
