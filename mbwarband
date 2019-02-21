@@ -1,0 +1,66 @@
+#!/bin/bash
+# Program:
+#  为骑马与砍杀提供界面
+# History:
+# 2019-02-20 zerolee First release
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+
+# 初始化相关变量
+zhantuan=FALSE
+napoleonic=FALSE
+viking=FALSE
+pendor=FALSE
+specials=FALSE
+
+# 首先判断 last_module_warband 存在不存在，
+# 存在则启动此文件中记录的 mod 为默认否则战团为默认
+if [ -f ~/.mbwarband/last_module_warband ]; then
+    lmw=`cat ~/.mbwarband/last_module_warband`
+    if [ "$lmw" == "mod" ]; then
+	mod=`file ~/.mbwarband/mod`
+	if [ "${mod##*/}" == "Prophesy_of_Pendor_V3.9.2" ]; then
+	    pendor=TRUE
+	else
+	    specials=TRUE
+	fi
+    elif [ "$lmw" == "Napoleonic Wars" ]; then
+	napoleonic=TRUE
+    else
+	viking=TRUE
+    fi
+else
+    zhantuan=TRUE
+fi
+
+ans=$(zenity  --list  --text "骑马与砍杀 mod 选择" --radiolist  --column "选择" \
+--column "mod" $zhantuan 战团 $napoleonic 拿破仑战争 $viking 维京征服 $pendor 潘德的预言 $specials 光明与黑暗); 
+
+# 用户进行选择，选择战团，则 last_module_warband 文件必须消失，处理方法则是将其修改为 last_module_warband_backup
+if [ ! -z $ans ]; then
+    [ -f ~/.mbwarband/last_module_warband ] && rm ~/.mbwarband/last_module_warband
+    [ -e ~/.mbwarband/mod ] && rm -rf ~/.mbwarband/mod
+    [ -e ~/.mbwarband/Savegames/mod ] && rm -rf ~/.mbwarband/Savegames/mod
+fi
+
+case $ans in
+    "战团")
+	;;
+    "拿破仑战争")
+	echo "Napoleonic Wars" >  ~/.mbwarband/last_module_warband
+	;;
+    "维京征服")
+	echo "Viking Conquest" >  ~/.mbwarband/last_module_warband
+	;;
+    "潘德的预言")
+	echo "mod" > ~/.mbwarband/last_module_warband
+	ln -s ~/.mbwarband/Prophesy_of_Pendor_V3.9.2 ~/.mbwarband/mod
+	ln -s ~/.mbwarband/Savegames/Prophesy_of_Pendor_V3.9.2 ~/.mbwarband/Savegames/mod
+	;;
+    "光明与黑暗")
+	echo "mod" > ~/.mbwarband/last_module_warband
+	ln -s ~/.mbwarband/Light_and_Darkness ~/.mbwarband/mod
+	ln -s ~/.mbwarband/Savegames/Light_and_Darkness ~/.mbwarband/Savegames/mod
+	;;
+esac
+
