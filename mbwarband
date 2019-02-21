@@ -1,66 +1,76 @@
 #!/bin/bash
 # Program:
-#  为骑马与砍杀提供界面
+#  为骑马与砍杀 mod 选择提供界面
 # History:
 # 2019-02-20 zerolee First release
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
 # 初始化相关变量
-zhantuan=FALSE
-napoleonic=FALSE
-viking=FALSE
-pendor=FALSE
-specials=FALSE
+i=3
+mods=(zhantuan napoleonic viking)
+modi=(FALSE FALSE FALSE)
+modls=`ls -F ~/.mbwarband/|grep \.\*/|egrep -v "(SceneObj|mod|Savegames|Characters/$)"`
+
+for var in $modls
+do
+    mods[$i]=${var%*/}
+    [ -d ~/.mbwarband/Savegames/${var%*/} ] || mkdir  ~/.mbwarband/Savegames/${var%*/}
+    modi[$i]=FALSE
+    i=$[$i + 1]
+done
+
 
 # 首先判断 last_module_warband 存在不存在，
 # 存在则启动此文件中记录的 mod 为默认否则战团为默认
 if [ -f ~/.mbwarband/last_module_warband ]; then
     lmw=`cat ~/.mbwarband/last_module_warband`
     if [ "$lmw" == "mod" ]; then
-	mod=`file ~/.mbwarband/mod`
-	if [ "${mod##*/}" == "Prophesy_of_Pendor_V3.9.2" ]; then
-	    pendor=TRUE
-	else
-	    specials=TRUE
-	fi
+        mod=`file ~/.mbwarband/mod`
+        k=3
+        for var in $modls
+        do
+            if [ "${mod##*/}" == "${var%*/}" ]; then
+                modi[$k]=TRUE
+            fi
+            k=$[$k + 1]
+        done
     elif [ "$lmw" == "Napoleonic Wars" ]; then
-	napoleonic=TRUE
+        modi[1]=TRUE
     else
-	viking=TRUE
+        modi[2]=TRUE
     fi
 else
-    zhantuan=TRUE
+    modi[0]=TRUE
 fi
 
+for (( j=0; j<i; j=j+1 ))
+do
+    modz=$modz" "${modi[$j]}" "${mods[$j]}
+done
+
 ans=$(zenity  --list  --text "骑马与砍杀 mod 选择" --radiolist  --column "选择" \
---column "mod" $zhantuan 战团 $napoleonic 拿破仑战争 $viking 维京征服 $pendor 潘德的预言 $specials 光明与黑暗); 
+              --column "mod" $modz);
 
 # 用户进行选择，选择战团，则 last_module_warband 文件必须消失，处理方法则是将其修改为 last_module_warband_backup
 if [ ! -z $ans ]; then
     [ -f ~/.mbwarband/last_module_warband ] && rm ~/.mbwarband/last_module_warband
     [ -e ~/.mbwarband/mod ] && rm -rf ~/.mbwarband/mod
     [ -e ~/.mbwarband/Savegames/mod ] && rm -rf ~/.mbwarband/Savegames/mod
+    case $ans in
+        "zhantuan")
+        ;;
+        "napoleonic")
+            echo "Napoleonic Wars" >  ~/.mbwarband/last_module_warband
+            ;;
+        "viking")
+            echo "Viking Conquest" >  ~/.mbwarband/last_module_warband
+            ;;
+        *)
+            echo "mod" > ~/.mbwarband/last_module_warband
+            ln -s ~/.mbwarband/$ans ~/.mbwarband/mod
+            ln -s ~/.mbwarband/Savegames/$ans ~/.mbwarband/Savegames/mod
+            ;;
+    esac
+    ~/公共/game/mbwarband_beta_amd64.appimage
 fi
-
-case $ans in
-    "战团")
-	;;
-    "拿破仑战争")
-	echo "Napoleonic Wars" >  ~/.mbwarband/last_module_warband
-	;;
-    "维京征服")
-	echo "Viking Conquest" >  ~/.mbwarband/last_module_warband
-	;;
-    "潘德的预言")
-	echo "mod" > ~/.mbwarband/last_module_warband
-	ln -s ~/.mbwarband/Prophesy_of_Pendor_V3.9.2 ~/.mbwarband/mod
-	ln -s ~/.mbwarband/Savegames/Prophesy_of_Pendor_V3.9.2 ~/.mbwarband/Savegames/mod
-	;;
-    "光明与黑暗")
-	echo "mod" > ~/.mbwarband/last_module_warband
-	ln -s ~/.mbwarband/Light_and_Darkness ~/.mbwarband/mod
-	ln -s ~/.mbwarband/Savegames/Light_and_Darkness ~/.mbwarband/Savegames/mod
-	;;
-esac
-
