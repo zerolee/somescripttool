@@ -31,14 +31,22 @@ if [ -f ~/.mbwarband/last_module_warband ]; then
     lmw=`cat ~/.mbwarband/last_module_warband`
     if [ "$lmw" == "mod" ]; then
         mod=`file ~/.mbwarband/mod`
-        k=3
-        for var in $modls
-        do
-            if [ "${mod##*/}" == "${var%*/}" ]; then
-                modi[$k]=TRUE
-            fi
-            k=$[$k + 1]
-        done
+	if [ -z "${mod##*broken*}" ]; then
+	    rm ~/.mbwarband/last_module_warband
+	    rm -rf ~/.mbwarband/mod
+	    rm -rf ~/.mbwarband/Savegames/mod
+	    rm -rf ~/.mbwarband/Savegames/${mod##*/}
+	    modi[0]=TRUE
+	else
+            k=3
+            for var in $modls
+            do
+		if [ "${mod##*/}" == "${var%*/}" ]; then
+                    modi[$k]=TRUE
+		fi
+		k=$[$k + 1]
+            done
+	fi
     elif [ "$lmw" == "Napoleonic Wars" ]; then
         modi[1]=TRUE
     else
