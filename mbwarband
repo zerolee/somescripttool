@@ -3,6 +3,10 @@
 #  为骑马与砍杀 mod 选择提供界面
 # History:
 # 2019-02-20 zerolee First release
+
+# 使用：
+#      将 ~/公共/game/mbwarband_beta_amd64.appimage 修改为自己的
+#      mbwarband_beta_amd64.appimage 存放路径
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
@@ -22,7 +26,7 @@ done
 
 
 # 首先判断 last_module_warband 存在不存在，
-# 存在则启动此文件中记录的 mod 为默认否则战团为默认
+# 存在则启动此文件中记录的 mod 为默认, 否则战团为默认
 if [ -f ~/.mbwarband/last_module_warband ]; then
     lmw=`cat ~/.mbwarband/last_module_warband`
     if [ "$lmw" == "mod" ]; then
@@ -44,15 +48,16 @@ else
     modi[0]=TRUE
 fi
 
+# 将 modi 和 mods 进行连接， 为 zenity 的 radiolist 提供值。
 for (( j=0; j<i; j=j+1 ))
 do
     modz=$modz" "${modi[$j]}" "${mods[$j]}
 done
 
 ans=$(zenity  --list  --text "骑马与砍杀 mod 选择" --radiolist  --column "选择" \
-              --column "mod" $modz);
+              --column "mod" $modz --height=$[200 + 20 * $[$i - 3]] --width=330);
 
-# 用户进行选择，选择战团，则 last_module_warband 文件必须消失，处理方法则是将其修改为 last_module_warband_backup
+# 用户进行选择，选择战团，则 last_module_warband 文件必须消失
 if [ ! -z $ans ]; then
     [ -f ~/.mbwarband/last_module_warband ] && rm ~/.mbwarband/last_module_warband
     [ -e ~/.mbwarband/mod ] && rm -rf ~/.mbwarband/mod
