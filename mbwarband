@@ -10,6 +10,9 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
+# 设置游戏语言为中文
+[ -e ~/.mbwarband/language.txt ] || echo "cns" > ~/.mbwarband/language.txt
+
 # 初始化相关变量
 i=3
 mods=(zhantuan napoleonic viking)
@@ -24,6 +27,20 @@ do
     i=$[$i + 1]
 done
 
+# 清除已经删除 mod 的存档
+modsave=`ls -F ~/.mbwarband/Savegames/|egrep -v "(Native|mod|Napoleonic|Viking)"`
+for var in $modsave
+do
+    for (( l=3; l<i; l=l+1 ))
+    do
+	if [ "${var%*/}" == "${mods[$l]}" ]; then
+	    break
+	fi
+    done
+    if [ "$l" == "$i" ]; then
+	rm -rf ~/.mbwarband/Savegames/$var
+    fi
+done
 
 # 首先判断 last_module_warband 存在不存在，
 # 存在则启动此文件中记录的 mod 为默认, 否则战团为默认
