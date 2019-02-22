@@ -18,11 +18,13 @@ i=3
 mods=(zhantuan napoleonic viking)
 modi=(FALSE FALSE FALSE)
 modls=`ls -F ~/.mbwarband/|grep \.\*/|egrep -v "(SceneObj|mod|Savegames|Characters/$)"`
+OLDIFS=$IFS
+IFS=$'\n'
 
 for var in $modls
 do
-    mods[$i]=${var%*/}
-    [ -d ~/.mbwarband/Savegames/${var%*/} ] || mkdir  ~/.mbwarband/Savegames/${var%*/}
+    mods[$i]="${var%*/}"
+    [ -d ~/.mbwarband/Savegames/"${var%*/}" ] || mkdir  ~/.mbwarband/Savegames/"${var%*/}"
     modi[$i]=FALSE
     i=$[$i + 1]
 done
@@ -38,7 +40,7 @@ do
 	fi
     done
     if [ "$l" == "$i" ]; then
-	rm -rf ~/.mbwarband/Savegames/$var
+	rm -rf ~/.mbwarband/Savegames/"$var"
     fi
 done
 
@@ -52,7 +54,7 @@ if [ -f ~/.mbwarband/last_module_warband ]; then
 	    rm ~/.mbwarband/last_module_warband
 	    rm -rf ~/.mbwarband/mod
 	    rm -rf ~/.mbwarband/Savegames/mod
-	    rm -rf ~/.mbwarband/Savegames/${mod##*/}
+	    rm -rf ~/.mbwarband/Savegames/"${mod##*/}"
 	    modi[0]=TRUE
 	else
             k=3
@@ -76,7 +78,7 @@ fi
 # 将 modi 和 mods 进行连接， 为 zenity 的 radiolist 提供值。
 for (( j=0; j<i; j=j+1 ))
 do
-    modz=$modz" "${modi[$j]}" "${mods[$j]}
+    modz=$modz$'\n'${modi[$j]}$'\n'${mods[$j]}
 done
 
 ans=$(zenity  --list  --text "骑马与砍杀 mod 选择" --radiolist  --column "选择" \
@@ -98,9 +100,12 @@ if [ ! -z $ans ]; then
             ;;
         *)
             echo "mod" > ~/.mbwarband/last_module_warband
-            ln -s ~/.mbwarband/$ans ~/.mbwarband/mod
-            ln -s ~/.mbwarband/Savegames/$ans ~/.mbwarband/Savegames/mod
+            ln -s ~/.mbwarband/"$ans" ~/.mbwarband/mod
+            ln -s ~/.mbwarband/Savegames/"$ans" ~/.mbwarband/Savegames/mod
+	    [ -e ~/.mbwarband/"$ans"/mod ] && rm -rf ~/.mbwarband/"$ans"/mod
             ;;
     esac
     ~/公共/game/mbwarband_beta_amd64.appimage
 fi
+
+IFS=$OLDIFS
