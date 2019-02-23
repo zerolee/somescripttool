@@ -29,6 +29,15 @@ do
     i=$[$i + 1]
 done
 
+# 计算出 mod 中最长文件名的长度
+max=${#mods[0]}
+for (( m=1; m<i; m=m+1 ))
+do
+    if [ $max -lt ${#mods[$m]} ]; then
+	max=${#mods[$m]}
+    fi
+done
+
 # 清除已经删除 mod 的存档
 modsave=`ls -F ~/.mbwarband/Savegames/|egrep -v "(Native|mod|Napoleonic|Viking)"`
 for var in $modsave
@@ -82,7 +91,7 @@ do
 done
 
 ans=$(zenity  --list  --text "骑马与砍杀 mod 选择" --radiolist  --column "选择" \
-              --column "mod" $modz --height=$[200 + 20 * $[$i - 3]] --width=330);
+              --column "mod" $modz --height=$[200 + 20 * $[$i - 3]] --width=$[100 + 7 * $max]);
 
 # 用户进行选择，选择战团，则 last_module_warband 文件必须消失
 if [ ! -z $ans ]; then
