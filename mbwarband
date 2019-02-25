@@ -10,6 +10,17 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
+# 备份存档
+function savegame_backup() {
+    while true
+    do
+	[ -e /tmp/"$1""_old" ] && rm -rf /tmp/"$1""_old"
+	[ -e /tmp/"$1" ] && mv -f /tmp/"$1" /tmp/"$1""_old"
+	[ -e ~/.mbwarband/Savegames/"$1" ] && cp -rf ~/.mbwarband/Savegames/"$1" /tmp/
+	sleep 10m
+    done
+}
+
 # 设置游戏语言为中文
 [ -e ~/.mbwarband/language.txt ] || echo "cns" > ~/.mbwarband/language.txt
 
@@ -100,21 +111,31 @@ if [ ! -z $ans ]; then
     [ -e ~/.mbwarband/Savegames/mod ] && rm -rf ~/.mbwarband/Savegames/mod
     case $ans in
         "zhantuan")
+	    savegame_backup "Native" &
         ;;
         "napoleonic")
             echo "Napoleonic Wars" >  ~/.mbwarband/last_module_warband
+	    savegame_backup "Napoleonic Wars" &
             ;;
         "viking")
             echo "Viking Conquest" >  ~/.mbwarband/last_module_warband
+	    savegame_backup "Viking Conquest" &
             ;;
         *)
             echo "mod" > ~/.mbwarband/last_module_warband
             ln -s ~/.mbwarband/"$ans" ~/.mbwarband/mod
             ln -s ~/.mbwarband/Savegames/"$ans" ~/.mbwarband/Savegames/mod
 	    [ -e ~/.mbwarband/"$ans"/mod ] && rm -rf ~/.mbwarband/"$ans"/mod
+	    savegame_backup "$ans" &
             ;;
     esac
     ~/公共/game/mbwarband_beta_amd64.appimage
+
+    for p_pid in `ps -ef |grep mbwarband |egrep -v grep|awk '{print $2}'`
+    do
+	pkill -9 -P $p_pid
+    done
+
 fi
 
 IFS=$OLDIFS
