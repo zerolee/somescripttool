@@ -5,6 +5,11 @@
 # 2017-05-18 zmqc First release
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
+emacsclient -e '(server-running-p)' &> /dev/null
+if [ $? != 0 ]; then
+    tmux send-keys -t emacsserver '/usr/local/bin/emacs -f server-start -nw' C-m
+    sleep 1.5s
+fi
 if [ $# == 0 ]; then
     emacsclient -t
     exit
