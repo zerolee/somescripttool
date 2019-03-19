@@ -10,4 +10,5 @@ you-get
 !rg.sh
 !emacs.sh
 cquery
+ccls
 hugo

@@ -1,3 +1,4 @@
+# -*- ove-mode: 1; cursor-type: box; -*-
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -10,7 +11,12 @@ esac
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
-HISTCONTROL=ignoreboth
+#HISTCONTROL=ignoredups：忽略连续重复的命令。
+#HISTCONTROL=ignorespace：忽略以空白字符开头的命令。
+#HISTCONTROL=ignoreboth：同时忽略以上两种。
+#HISTCONTROL=erasedups：忽略所有历史命令中的重复命令。
+#HISTCONTROL=ignoreboth
+HISTCONTROL=erasedups
 
 # append to the history file, don't overwrite it
 shopt -s histappend
@@ -200,8 +206,6 @@ if [ "$EMACS_START" != "emacs_start" ]; then
     # set completion-ignore-case on
     # set show-all-if-ambiguous on
     # bind TAB:menu-complete
-    # 配置 autojump
-    . /usr/share/autojump/autojump.sh
 
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 fi
