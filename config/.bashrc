@@ -132,8 +132,6 @@ export EDITOR='emacsclient -t'
 
 export LANGUAGE="en_US.utf8"
 
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-export JRE_HOME=${JAVA_HOME}/jre
 export CLASSPATH=".:/usr/share/java/stringtemplate4.jar:/usr/share/java/antlr4.jar:/usr/share/java/antlr4-runtime.jar:/usr/share/java/antlr3-runtime.jar:/usr/share/java/treelayout.jar:$CLASSPATH"
 alias grun='java org.antlr.v4.gui.TestRig'
 
@@ -207,7 +205,7 @@ if [ "$EMACS_START" != "emacs_start" ]; then
     # set show-all-if-ambiguous on
     # bind TAB:menu-complete
 
-    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash && export FZF_DEFAULT_COMMAND='fd --type file'
 fi
 
 

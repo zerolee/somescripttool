@@ -1,1 +1,2 @@
-rg.sh
+#!/bin/bash
+/usr/bin/rg -g '!*~' $@
