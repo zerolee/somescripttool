@@ -5,10 +5,24 @@
 # 2017-05-18 zmqc First release
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
-function GPU() {
-    lspci|grep -i 'VGA'|cut -d':' -f3
-}
 
+OLDIFS=$IFS
+IFS=$'\n'
+wlp9s0=`ifconfig wlp9s0|awk '/\<inet\>/,/\<ether\>/{print $2}'`
+mylspci=`lspci |awk -F': ' '/(VGA|Eth|Net)/{print $2}'`
+i=0
+for var in $wlp9s0
+do
+    myips[$i]="${var}"
+    i=$[$i + 1]
+done
+
+myIntel=`echo "${mylspci}"|grep -i 'intel'`
+myAmd=`echo "${mylspci}"|grep -i 'amd'`
+myEth=`echo "${mylspci}"|grep -i 'eth'`
+myWifi=`echo "${mylspci}"|grep -i 'wifi'`
+
+IFS=$OLDIFS
 
 echo "Product    Name:"     `cat /sys/class/dmi/id/board_vendor`    \
      `cat /sys/class/dmi/id/product_version`                        \
@@ -16,19 +30,20 @@ echo "Product    Name:"     `cat /sys/class/dmi/id/board_vendor`    \
 echo "Bios       Info:"     `cat /sys/class/dmi/id/bios_vendor `    \
      `cat /sys/class/dmi/id/bios_version `                          \
      `cat /sys/class/dmi/id/bios_date `
-echo "Static hostname:"     `hostname`
+echo "             OS:"     `hostnamectl |awk -F ': ' '/System/{print $2}'`
 echo "         Kernel:"     `uname -r`
-echo "    Description:"     `lsb_release -d | awk '{print $2 "\t" $3 " " $4 "  " $5}'`
-echo "          Shell:"     `echo "Bash" ${BASH_VERSION%(*}`
-echo "             DE:"     `echo $XDG_CURRENT_DESKTOP`
-echo "            CPU:"     `lscpu |awk -F ':' '/name/{print $2}'|sed -r '1s/^ +//g'`
-echo "            GPU:"     `GPU|grep -i intel`
-echo "            GPU:"     `GPU|grep -i 'amd'`
-echo "            Eth:"     `lspci|grep -i 'eth'|cut -d: -f3`
+echo "          Shell:"     "Bash" ${BASH_VERSION%(*}
+echo "             DE:"     $XDG_CURRENT_DESKTOP
+echo "            CPU:"     `cat /proc/cpuinfo |awk -F': '  '/model name/{print $2; exit}'`
+echo "            GPU:"     $myIntel
+echo "            GPU:"     $myAmd
+echo "            Eth:"     $myEth
+echo "           Wifi:"     $myWifi
 echo "            Time"     `w|awk 'NR==1{print $1}'`
 echo "          Uptime"     `w|awk 'NR==1{print $3}'|sed 's/,//g'`
-echo "           IPV4:"     `ifconfig wlp9s0|awk '/\<inet\>/{print $2}'`
-echo "           IPV6:"     `ifconfig wlp9s0|awk '/\<inet6\>/{print $2}'`
-echo "            MAC:"     `ifconfig wlp9s0|awk '/\<ether\>/{print $2}'`
+echo "           IPV4:"     ${myips[0]}
+echo "           IPV6:"     ${myips[1]}
+echo "           IPV6:"     ${myips[2]}
+echo "            MAC:"     ${myips[3]}
 echo "            RAM:"     `free -h | awk '/Mem/{print $3 "/" $2}'`
 echo "           SWAP:"     `free -h | awk '/Swap/{print $3 "/" $2}'`
