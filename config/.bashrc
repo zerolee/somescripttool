@@ -132,8 +132,7 @@ export EDITOR='emacsclient -t'
 
 export LANGUAGE="en_US.utf8"
 
-export CLASSPATH=".:/usr/share/java/stringtemplate4.jar:/usr/share/java/antlr4.jar:/usr/share/java/antlr4-runtime.jar:/usr/share/java/antlr3-runtime.jar:/usr/share/java/treelayout.jar:$CLASSPATH"
-alias grun='java org.antlr.v4.gui.TestRig'
+alias grun='java -classpath .:/usr/share/java/stringtemplate4.jar:/usr/share/java/antlr4.jar:/usr/share/java/antlr4-runtime.jar:/usr/share/java/antlr3-runtime.jar:/usr/share/java/treelayout.jar:$CLASSPATH org.antlr.v4.gui.TestRig'
 
 
 
@@ -205,9 +204,9 @@ if [ "$EMACS_START" != "emacs_start" ]; then
     # set show-all-if-ambiguous on
     # bind TAB:menu-complete
 
-    [ -f ~/.fzf.bash ] && source ~/.fzf.bash && export FZF_DEFAULT_COMMAND='fd --type file'
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 fi
-
+export FZF_DEFAULT_COMMAND='fd --type file'
 
 [ -f ~/bin/mycentos-completion.sh ] && source ~/bin/mycentos-completion.sh
 [ -f ~/bin/video-completion.sh ] && source ~/bin/video-completion.sh
