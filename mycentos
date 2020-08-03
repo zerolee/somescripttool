@@ -63,7 +63,18 @@ function testip() {
 
 # 帮助信息
 function help() {
-    echo -e "     help     ( 查看 mycentos 的参数介绍 )\n     ls       ( 查看有哪些虚拟机 ) \n     boot     ( 启动虚拟机 )\n     ssh      ( 用ssh进行远程连接 )\n     status   ( 查看虚拟机是否启动 )\n     ping     ( ping 一下虚拟机的网络 )\n     pause    ( 暂停虚拟机 )\n     resume   ( 恢复暂停虚拟机 )\n     ss       ( savestate 保存状态然后关闭 )\n     shutdown ( 关机 )\n     poweroff ( 强制关机 )"
+    echo -e "\
+     help     ( 查看 mycentos 的参数介绍 )\n\
+     ls       ( 查看有哪些虚拟机 ) \n\
+     boot     ( 启动虚拟机 )\n\
+     ssh      ( 用ssh进行远程连接 )\n\
+     status   ( 查看虚拟机是否启动 )\n\
+     ping     ( ping 一下虚拟机的网络 )\n\
+     pause    ( 暂停虚拟机 )\n\
+     resume   ( 恢复暂停虚拟机 )\n\
+     ss       ( savestate 保存状态然后关闭 )\n\
+     shutdown ( 关机 )\n\
+     poweroff ( 强制关机 )"
 }
 
 

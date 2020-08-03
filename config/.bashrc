@@ -158,7 +158,8 @@ then
     fi
     emacsclient -e '(server-running-p)' &> /dev/null
     if [ $? != 0 ]; then
-        tmux send-keys -t emacsserver '/usr/local/bin/emacs -f server-start -nw' C-m
+        tmux send-keys -t emacsserver \
+             '/usr/local/bin/emacs -f server-start -f ove-mode -nw' C-m
     fi
     mylocation=$(tty|cut -d'/' -f3)
     if [ "$mylocation" == "pts" ]; then
