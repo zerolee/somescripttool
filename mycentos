@@ -10,6 +10,7 @@ export PATH
 # 变量定义区
 ################################
 
+vmsUUID="f11cedbd-cdc8-4b23-822e-b7eaec14d693"
 vms=$(VBoxManage list runningvms)
 existvms=$(VBoxManage list runningvms|sed 's/.*{//g'|sed 's/}//g')
 statvms=$(VBoxManage showvminfo centos|grep -i state|cut -d':' -f2|awk  '{print $1}')
@@ -22,10 +23,10 @@ statvms=$(VBoxManage showvminfo centos|grep -i state|cut -d':' -f2|awk  '{print 
 ################################
 # 开机
 function boot() {
-    if [ "${existvms}" != "f11cedbd-cdc8-4b23-822e-b7eaec14d693" ]; then
+    if [ "${existvms}" != "${vmsUUID}" ]; then
         echo "boot..."
         VBoxManage startvm centos -type headless &> /dev/null
-        while [ "${existvms}" != "f11cedbd-cdc8-4b23-822e-b7eaec14d693" ]
+        while [ "${existvms}" != "${vmsUUID}" ]
         do
             sleep 1
             existvms=$(VBoxManage list runningvms|sed 's/.*{//g'|sed 's/}//g')
@@ -47,7 +48,7 @@ function connect() {
 
 # 测试是否可以连接
 function testip() {
-    if [ "${existvms}" != "f11cedbd-cdc8-4b23-822e-b7eaec14d693" ]; then
+    if [ "${existvms}" != "${vmsUUID}" ]; then
         echo "虚拟机未启动"
         exit 0
     fi
@@ -84,6 +85,10 @@ function help() {
 # 不带任何参数则直接启动
 if [ $# == 0 ]; then
     boot
+    # 虚拟机已经启动了，但是被暂停了
+    if [ "${statvms}" == "paused" ]; then
+        VBoxManage controlvm centos resume
+    fi
     testip
     # 网络可以连通后，ssh 服务还没有完全启动
     if [ "${statvms}" == "powered" ]; then
