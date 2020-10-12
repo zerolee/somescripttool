@@ -175,7 +175,7 @@ fi
 #export MANPATH=/usr/man:/usr/share/man:~/backups/src/manpages_zh/man/
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
-alias myip="/sbin/ifconfig wlp9s0|awk '/inet/{print \$2}'"
+alias myip="ip a show wlp9s0|awk '/inet/{print \$2}'"
 alias e="emacsclient -t"
 
 #if [ $PWD == $HOME ]; then

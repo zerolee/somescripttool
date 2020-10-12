@@ -8,7 +8,7 @@ export PATH
 
 OLDIFS=$IFS
 IFS=$'\n'
-wlp9s0=`ifconfig wlp9s0|awk '/\<inet\>/,/\<ether\>/{print $2}'`
+wlp9s0=`ip a show wlp9s0|awk '/ether|inet/{print $2}'`
 mylspci=`lspci |awk -F': ' '/(VGA|Eth|Net)/{print $2}'`
 i=0
 for var in $wlp9s0
@@ -39,11 +39,10 @@ echo "            GPU:"     $myIntel
 echo "            GPU:"     $myAmd
 echo "            Eth:"     $myEth
 echo "           Wifi:"     $myWifi
-echo "            Time"     `w|awk 'NR==1{print $1}'`
-echo "          Uptime"     `w|awk 'NR==1{print $3}'|sed 's/,//g'`
-echo "           IPV4:"     ${myips[0]}
-echo "           IPV6:"     ${myips[1]}
+echo "           Time:"     `date`
+echo "         Uptime:"     `uptime --pretty`
+echo "           IPV4:"     ${myips[1]}
 echo "           IPV6:"     ${myips[2]}
-echo "            MAC:"     ${myips[3]}
+echo "            MAC:"     ${myips[0]}
 echo "            RAM:"     `free -h | awk '/Mem/{print $3 "/" $2}'`
 echo "           SWAP:"     `free -h | awk '/Swap/{print $3 "/" $2}'`

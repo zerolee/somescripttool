@@ -6,11 +6,11 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
-# FS 输入字段分隔符 
+# FS 输入字段分隔符
 # IGNORECASE 控制大小写敏感 0（大小写敏感）
 # NF 当前记录中的字段个数
 # NR 已经读出的记录数
-# OFS 输出字段分隔符 
+# OFS 输出字段分隔符
 # ORS 输出的记录分隔符
 # RS 输入的记录的分隔符
 
@@ -27,19 +27,19 @@ function concat() {
 
     mkdir videoconcattmp
     touch videoconcattmp/mpjt
-    
+
     i=1
     for var in $@
     do
-	mi=$i"."`echo $var |cut -d'.' -f2`
-	name=videoconcattmp/$i"."`echo $var |cut -d'.' -f2`
-	if [ $i != $# ]; then
-	    echo "file '$mi'" >> videoconcattmp/mpjt
-	    mv $var $name
-	else
-	    echo $var
-	fi
-	i=$((i+1))
+        mi=$i"."`echo $var |cut -d'.' -f2`
+        name=videoconcattmp/$i"."`echo $var |cut -d'.' -f2`
+        if [ $i != $# ]; then
+            echo "file '$mi'" >> videoconcattmp/mpjt
+            mv $var $name
+        else
+            echo $var
+        fi
+        i=$((i+1))
     done
     ffmpeg -f concat -i videoconcattmp/mpjt -c copy $var
 
@@ -48,11 +48,11 @@ function concat() {
     i=1
     for var in $@
     do
-    	name=videoconcattmp/$i"."`echo $var |cut -d'.' -f2`
-    	if [ $i != $# ]; then
-    	    mv $name $var
-    	fi
-    	i=$((i+1))
+        name=videoconcattmp/$i"."`echo $var |cut -d'.' -f2`
+        if [ $i != $# ]; then
+            mv $name $var
+        fi
+        i=$((i+1))
     done
 
     rm -rf videoconcattmp
@@ -65,26 +65,26 @@ function count_time() {
            BEGIN{FS=":";RS="\n";
                  starttime=0; endtime=0;
                  hour=0; min=0; second=0;}
-	   {
-	     if (NF == 3) {
+           {
+             if (NF == 3) {
                  hour   =  $1;
                  min    =  $2;
                  second =  $3;
              } else if (NF == 2 ){
-	       min    = $1;
+               min    = $1;
                second = $2;
              } else {
-	       second = $1;
+               second = $1;
              }
 
-	     if (NR == 1) {
-	         starttime = hour * 60 * 60 + min * 60 + second;
-		 hour = 0;
+             if (NR == 1) {
+                 starttime = hour * 60 * 60 + min * 60 + second;
+                 hour = 0;
              } else {
                  endtime = hour * 60 * 60 + min * 60 + second;
              }
 
-	   }
+           }
            END{print endtime - starttime;}'
 }
 
@@ -104,18 +104,18 @@ function vgif() {
 
     output="out.gif"
     if [ "$#" == "2" ]; then
-	output=$2
+        output=$2
     elif [ "$#" == "4" ]; then
-	output=$4
+        output=$4
     fi
 
     if [ "$#" -le 2 ];then
-	ffmpeg -v warning -i $1 -vf "$filters,palettegen" -y $palette
+        ffmpeg -v warning -i $1 -vf "$filters,palettegen" -y $palette
         ffmpeg -v warning -i $1 -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $output
     else
         duration=`count_time $1 $2`
-	ffmpeg -v warning -ss $1 -t $duration -i $3 -vf "$filters,palettegen" -y $palette
-	ffmpeg -v warning -ss $2 -t $duration -i $3 -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $output
+        ffmpeg -v warning -ss $1 -t $duration -i $3 -vf "$filters,palettegen" -y $palette
+        ffmpeg -v warning -ss $2 -t $duration -i $3 -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $output
     fi
 }
 
@@ -123,7 +123,7 @@ function vgif() {
 function record() {
     output="/tmp/out.mp4"
     if [ "$#" == "1" ]; then
-	output=$1
+        output=$1
     fi
     #ffmpeg -f x11grab -video_size cif -s xga -framerate 25 -i :0.0+38,63 $output
     # 执行 xwinfo Absolute upper-left X: 110
@@ -135,19 +135,19 @@ function record() {
     i=0
     for var in $xywh
     do
-	i=$((i+1))
-	if [ $i == 1 ]; then
-	    index=$var
-	elif [ $i == 2 ]; then
-	    index=":0.0+"$index","$var
-	elif [ $i == 3 ]; then
-	    s=$var
-	else
-	    s=$s"x"$var
-	fi
+        i=$((i+1))
+        if [ $i == 1 ]; then
+            index=$var
+        elif [ $i == 2 ]; then
+            index=":0.0+"$index","$var
+        elif [ $i == 3 ]; then
+            s=$var
+        else
+            s=$s"x"$var
+        fi
     done
 
-    
+
     ffmpeg -f x11grab -video_size cif -s $s -framerate 25 -i $index $output
 }
 
@@ -156,9 +156,9 @@ function record() {
 function gif() {
     record
     if [ $# == 1 ]; then
-	vgif "/tmp/out.mp4" $1
+        vgif "/tmp/out.mp4" $1
     else
-	vgif "/tmp/out.mp4"
+        vgif "/tmp/out.mp4"
     fi
 }
 
@@ -168,29 +168,29 @@ function byzanz_record() {
     # width 和 height 就是截取画面的寛和高，也就是画面的大小，最后就是输出文件的名字。
     output="byzanz_record.gif"
     if [ $# == 2 ]; then
-	output=$2
+        output=$2
     fi
     # 返回 X, Y, Width, Height 的组合， 如 “110 102 656 434”
     xywh=`xwininfo |awk 'BEGIN{FS=":";RS="\n";xywh="";}/Absolute|Width|Height/{xywh=xywh$2}END{print xywh}'`
     i=0
     for var in $xywh
     do
-	i=$((i+1))
-	if [ $i == 1 ]; then
-	    index="--x="$var
-	elif [ $i == 2 ]; then
-	    index=$index" --y="$var
-	elif [ $i == 3 ]; then
-	    index=$index" --width="$var
-	else
-	    index=$index" --height="$var
-	fi
+        i=$((i+1))
+        if [ $i == 1 ]; then
+            index="--x="$var
+        elif [ $i == 2 ]; then
+            index=$index" --y="$var
+        elif [ $i == 3 ]; then
+            index=$index" --width="$var
+        else
+            index=$index" --height="$var
+        fi
     done
-    
-	       
+
+
     #byzanz-record --duration=$1 --x=100 --y=200 --width=700 --height=400 $output
     byzanz-record --duration=$1 --delay=3 -v $index $output
-   
+
 }
 
 # 去除水印
@@ -198,18 +198,30 @@ function remove_watermark() {
     outputname="output.mp4"
     inputname=$1
     if [ "$#" == "2" ]; then
-	outputname=$2
+        outputname=$2
     fi
     # 测试
     while [ "${answer}" != "y" ]
     do
-	read -p "x y w h: "  x y w h
-	ffplay -i $inputname -vf delogo=x=$x:y=$y:w=$w:h=$h:show=1
-	read -p "Please input[y/n] : " answer
+        read -p "x y w h: "  x y w h
+        ffplay -i $inputname -vf delogo=x=$x:y=$y:w=$w:h=$h:show=1
+        read -p "Please input[y/n] : " answer
     done
     # 通过
     ffmpeg -i $inputname -vf delogo=x=$x:y=$y:w=$w:h=$h -acodec copy $outputname
 }
+
+
+# 抽取图片（截图）
+function capture() {
+    start=$1
+    end=$2
+    inputname=$3
+    count=`count_time $1 $2`
+    outputname=${4}image-${inputname%.*}`count_time 0 $2`%d.jpeg
+    ffmpeg -ss $start -t $count -i $inputname -r 3 -q:v 2 -f image2 $outputname
+}
+
 # 帮助信息
 function help() {
     echo -e "help:         查看 video 的参数介绍, 加中括号表示参数可选 "
@@ -231,48 +243,54 @@ function help() {
               该参数无效时尝试 apt install byzanz"
     echo -e "remove_watermark: video remove_watermark input.mp4 [output.mp4]
               x,y：水印的左上方坐标, w,h: 水印的宽高"
+    echo -e "capture: video capture starttime endtime input.mp4 [dir/]
+              截图，在 input.mp4 中从 starttime 到 endtime 抽取图片保存在 dir/ 中"
 }
 
 
 # 针对不同参数进行处理
 case $1 in
     "help")
-	help
-	;;
-    "concat")
-	shift
-	concat $@
-	;;
-    "cut")
-	shift
-	cut_video $@
-	;;
-    "vgif")
-	shift
-	vgif $@
-	;;
-    "gif")
-	shift
-	gif $@
-	;;
-    "record")
-	shift
-	record $@
-	;;
-    "byzanz_record")
-	shift
-	byzanz_record $@
-	;;
-    "count_time")
-	shift
-	count_time $@
-	;;
-    "remove_watermark")
-	shift
-	remove_watermark $@
-	;;
-    *)
-	echo "        参数错误"
-	help
+        help
         ;;
-esac    
+    "concat")
+        shift
+        concat $@
+        ;;
+    "cut")
+        shift
+        cut_video $@
+        ;;
+    "vgif")
+        shift
+        vgif $@
+        ;;
+    "gif")
+        shift
+        gif $@
+        ;;
+    "record")
+        shift
+        record $@
+        ;;
+    "byzanz_record")
+        shift
+        byzanz_record $@
+        ;;
+    "count_time")
+        shift
+        count_time $@
+        ;;
+    "remove_watermark")
+        shift
+        remove_watermark $@
+        ;;
+    "capture")
+        shift
+        capture $@
+        ;;
+    *)
+        echo "        参数错误"
+        help
+        ;;
+esac
