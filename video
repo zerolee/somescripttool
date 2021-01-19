@@ -194,7 +194,7 @@ function byzanz_record() {
 }
 
 # 去除水印
-function remove_watermark() {
+function remove_mark() {
     outputname="output.mp4"
     inputname=$1
     if [ "$#" == "2" ]; then
@@ -218,8 +218,17 @@ function capture() {
     end=$2
     inputname=$3
     count=`count_time $1 $2`
-    outputname=${4}image-${inputname%.*}`count_time 0 $2`%d.jpeg
+    outputname=${4}image-${inputname%.*}`count_time 0 $2`%d.jpg
     ffmpeg -ss $start -t $count -i $inputname -r 3 -q:v 2 -f image2 $outputname
+}
+
+# 下载 m3u8 视频
+function downm3u8() {
+    output="output.mp4"
+    if [ "$#" == "2" ]; then
+        output=$2
+    fi
+    ffmpeg -i $1 -c copy -bsf:a aac_adtstoasc -movflags frag_keyframe $output
 }
 
 # 帮助信息
@@ -237,14 +246,16 @@ function help() {
               作用：将视频转换 gif"
     echo -e "gif:          video gif  [output.gif]
               作用：录制 gif"
-    echo -e "byzanz_record: video byzanz_record duration [output.gif]
+    echo -e "byzanz_record:video byzanz_record duration [output.gif]
               duration 是需要录制的时间
               作用：使用 byzanz 录制 gif
               该参数无效时尝试 apt install byzanz"
-    echo -e "remove_watermark: video remove_watermark input.mp4 [output.mp4]
+    echo -e "remove_mark:  video remove_mark input.mp4 [output.mp4]
               x,y：水印的左上方坐标, w,h: 水印的宽高"
-    echo -e "capture: video capture starttime endtime input.mp4 [dir/]
+    echo -e "capture:      video capture starttime endtime input.mp4 [dir/]
               截图，在 input.mp4 中从 starttime 到 endtime 抽取图片保存在 dir/ 中"
+    echo -e "downm3u8:     video downm3u8 index.m3u8 [output.mp4]
+              下载 m3u8 视频"
 }
 
 
@@ -281,13 +292,17 @@ case $1 in
         shift
         count_time $@
         ;;
-    "remove_watermark")
+    "remove_mark")
         shift
-        remove_watermark $@
+        remove_mark $@
         ;;
     "capture")
         shift
         capture $@
+        ;;
+    "downm3u8")
+        shift
+        downm3u8 $@
         ;;
     *)
         echo "        参数错误"

@@ -1,4 +1,4 @@
-# -*- ove-mode: 1; cursor-type: box; -*-
+# -*- vesie-mode: 1; cursor-type: box; -*-
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -142,7 +142,7 @@ if [ ! -z "$TMUX" ]; then
     export PROMPT_COMMAND='tmux set -g status-right "#(whoami)@#h:#{pane_current_path}"'
 fi
 
-if [ "$TERM" != "screen-256color" ] && [ "$EMACS_START" != "emacs_start" ]
+if [ -e /usr/bin/tmux ] && [ "$TERM" != "screen-256color" ] && [ "$EMACS_START" != "emacs_start" ]
 then
     #tmux attach-session -t "$USER" || tmux new-session -s "$USER"
     # 启用一个名为 network 的 session 来运行 networkautostart 这个脚本
@@ -159,7 +159,7 @@ then
     emacsclient -e '(server-running-p)' &> /dev/null
     if [ $? != 0 ]; then
         tmux send-keys -t emacsserver \
-             '/usr/local/bin/emacs -f server-start -f ove-mode -nw' C-m
+             '/usr/local/bin/emacs -f server-start -f vesie-mode -nw' C-m
     fi
     mylocation=$(tty|cut -d'/' -f3)
     if [ "$mylocation" == "pts" ]; then
