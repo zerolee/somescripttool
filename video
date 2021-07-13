@@ -88,13 +88,15 @@ function count_time() {
            END{print endtime - starttime;}'
 }
 
+# 剪切视频
+# cut_video starttime endtime input.mp4 [ouput.mp4]
 function cut_video() {
-    start=$1
-    end=$2
-    inputname=$3
-    outputname=$4
+    output="output.mp4"
+    if [ "$#" == "4" ]; then
+        output=$4
+    fi
     count=`count_time $1 $2`
-    ffmpeg -ss $start -t $count -i $inputname -vcodec copy -acodec copy $outputname
+    ffmpeg -ss $1 -t $count -i $3 -vcodec copy -acodec copy $output
 }
 
 # 将视频转换成 gif
@@ -222,6 +224,44 @@ function capture() {
     ffmpeg -ss $start -t $count -i $inputname -r 3 -q:v 2 -f image2 $outputname
 }
 
+# 功能: 抽取音频
+# 使用 video extract_music input.mp4 [output.mp3]
+# 或者 video extract_music [1:00] [2:00] input.mp4 [output.mp3]
+function extract_music {
+    output="output.mp3"
+    if [ "$#" == "2" ]; then
+        output=$2
+    elif [ "$#" == 4 ]; then
+        output=$4
+    fi
+
+    if [ "$#" -le 2 ]; then
+        ffmpeg -i $1 -vn $output
+    else
+        duration=`count_time $1 $2`
+        ffmpeg -ss $1 -t $duration -i $3 -vn $output
+    fi
+}
+
+# 功能：抽取视频（去除音频）
+# 使用 video extract_video input.mp4 [output.mp3]
+# 或者 video extract_video [1:00] [2:00] input.mp4 [output.mp3]
+function extract_video {
+    output="output.mp4"
+    if [ "$#" == "2" ]; then
+        output=$2
+    elif [ "$#" == 4 ]; then
+        output=$4
+    fi
+
+    if [ "$#" -le 2 ]; then
+        ffmpeg -i $1 -vcodec copy -an $output
+    else
+        duration=`count_time $1 $2`
+        ffmpeg -ss $1 -t $duration -i $3 -vcodec copy -an $output
+    fi
+}
+
 # 下载 m3u8 视频
 function downm3u8() {
     output="output.mp4"
@@ -237,9 +277,9 @@ function help() {
     echo -e "concat:       video concat 1.mp4 2.mp4..., out.mp4
               最后一个个参数是生成文件的名字， 前面的是待组合的文件名
               待组合的名字起的尽可能简单些"
-    echo -e "cut:          video cut starttime endtime inputvideo ouputvideo
+    echo -e "cut:          video cut starttime endtime input.mp4 [ouput.mp4]
               剪切视频或者音乐 starttime:开始时间， endtime:结束时间。
-              inputvideo:待处理视频， ouputvideo:处理后的新视频"
+              input:待处理视频， ouput:处理后的新视频"
     echo -e "record:       video record [output.mp4] 录制视频，默认生成 /tmp/out.mp4
               作用: 录制视频"
     echo -e "vgif:         video vgif [starttime] [endtime] input.mp4 [output.gif]
@@ -256,6 +296,10 @@ function help() {
               截图，在 input.mp4 中从 starttime 到 endtime 抽取图片保存在 dir/ 中"
     echo -e "downm3u8:     video downm3u8 index.m3u8 [output.mp4]
               下载 m3u8 视频"
+    echo -e "extract_music:video extract_music [starttime] [endtime] input.mp4 [output.mp3]
+              提取音频"
+    echo -e "extract_video:video extract_video [starttime] [endtime] input.mp4 [output.mp4]
+              提取视频"
 }
 
 
@@ -304,6 +348,14 @@ case $1 in
         shift
         downm3u8 $@
         ;;
+    "extract_music")
+        shift
+        extract_music $@
+        ;;
+    "extract_video")
+	shift
+	extract_video $@
+	;;
     *)
         echo "        参数错误"
         help
