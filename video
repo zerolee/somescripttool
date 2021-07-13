@@ -188,7 +188,7 @@ function byzanz_record() {
             index=$index" --height="$var
         fi
     done
-
+    sleep 3			# 给点时间准备
 
     #byzanz-record --duration=$1 --x=100 --y=200 --width=700 --height=400 $output
     byzanz-record --duration=$1 --delay=3 -v $index $output
@@ -288,7 +288,7 @@ function help() {
               作用：录制 gif"
     echo -e "byzanz_record:video byzanz_record duration [output.gif]
               duration 是需要录制的时间
-              作用：使用 byzanz 录制 gif
+              作用：使用 byzanz 录制 gif，注：会有 3 秒左右的等待时间。
               该参数无效时尝试 apt install byzanz"
     echo -e "remove_mark:  video remove_mark input.mp4 [output.mp4]
               x,y：水印的左上方坐标, w,h: 水印的宽高"
@@ -353,9 +353,9 @@ case $1 in
         extract_music $@
         ;;
     "extract_video")
-	shift
-	extract_video $@
-	;;
+        shift
+        extract_video $@
+        ;;
     *)
         echo "        参数错误"
         help
