@@ -271,6 +271,17 @@ function downm3u8() {
     ffmpeg -i $1 -c copy -bsf:a aac_adtstoasc -movflags frag_keyframe $output
 }
 
+# 合并视频和音频
+# video merge_music_video input.mp3 input.mp4 [output.mp4]
+function merge_music_video() {
+    output="output.mp4"
+    if [ "$#" == "3" ]; then
+	output=$3
+    fi
+    echo $output
+    ffmpeg -i $2 -i $1 -vcodec copy -acodec copy $output
+}
+
 # 帮助信息
 function help() {
     echo -e "help:         查看 video 的参数介绍, 加中括号表示参数可选 "
@@ -300,6 +311,8 @@ function help() {
               提取音频"
     echo -e "extract_video:video extract_video [starttime] [endtime] input.mp4 [output.mp4]
               提取视频"
+    echo -e "merge_music_video: video merge_music_video input.mp3 input.mp4 [output.mp4]
+              合并视频和音频"
 }
 
 
@@ -356,6 +369,10 @@ case $1 in
         shift
         extract_video $@
         ;;
+    "merge_music_video")
+	shift
+	merge_music_video $@
+	;;
     *)
         echo "        参数错误"
         help

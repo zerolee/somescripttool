@@ -118,6 +118,10 @@ export GTK_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 export QT_IM_MODULE=fcitx
 
+if [[ ! $CLASSPATH =~ "antlr" ]]; then
+    export CLASSPATH=".:/home/zmqc/bin/config/antlr-4.9.3-complete.jar:$CLASSPATH"
+fi
+
 alias ll='ls -l'
 alias emacs='emacs -nw'
 ###alias vi='emacs -nw'
@@ -131,10 +135,6 @@ export EDITOR='emacsclient -t'
 #synclient TouchpadOff=1
 
 export LANGUAGE="en_US.utf8"
-
-alias grun='java -classpath .:/usr/share/java/stringtemplate4.jar:/usr/share/java/antlr4.jar:/usr/share/java/antlr4-runtime.jar:/usr/share/java/antlr3-runtime.jar:/usr/share/java/treelayout.jar:$CLASSPATH org.antlr.v4.gui.TestRig'
-
-
 
 if [ ! -z "$TMUX" ]; then
     #    export TERM=xterm-256color

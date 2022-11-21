@@ -1,0 +1,3 @@
+#!/bin/bash
+java -cp "/home/zmqc/bin/config/antlr-4.9.3-complete.jar:$CLASSPATH" org.antlr.v4.Tool $*
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+# 可以详细列出一个语言应用在匹配输入文本过程中的信息，
+# 这些输入文本可以来自文件或者标准输入
+# TestRig 使用 Java 的反射机制来调用编译后的识别程序
+
+# 接受一个语法名和一个起始规则名作为参数，此外，它还接受众多的参数
+# 通过这些参数我们可以指定输出的内容。
+
+java -cp "/home/zmqc/bin/config/antlr-4.9.3-complete.jar:$CLASSPATH" org.antlr.v4.gui.TestRig $*
+

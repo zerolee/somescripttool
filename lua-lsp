@@ -1,0 +1,2 @@
+#!/bin/bash
+exec "/home/zmqc/backups/src/lua-language-server/bin/lua-language-server" "$@"
