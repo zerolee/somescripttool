@@ -1,0 +1,45 @@
+# -*- vesie-mode: 1; cursor-type: box; -*-
+#
+# deb [ option1=value1 option2=value2 ] uri suite component1 [component2] […]
+# deb    : 二进制包
+# deb-src: 对应软件的源码包
+# uri    : 该配置项使用的源地址(根据你选择的源站地址来确定)
+# suite  : 指示所使用的镜像仓库(格式为: 发行版名-镜像仓库名)
+#          发行版名   : 特定的Debian版本发行版名称如 bullseye 或者 (unstable、stable、testing、sid)
+#          镜像仓库名 : 省略    : 最主要的仓库，提供该版本下大部分软件包。
+#                       updates : 非安全性更新(即不影响到系统安全的 bug 修补的更新)
+#                       proposed-updates ：预更新(小 beta 版，过后会进入updates)
+#                       backports ： 后备(此仓库处于第二优先顺序，而上述几个仓库处于第一优先顺序)
+#                       安装第二优先顺序的包必须特别指明，见 apt-get(8) aptitude(8) 的 –target-release 选项。
+# component : 表示所使用的对应镜像仓库的包许可类型(如果许可证类型没有在该字段列出，那么将不能安装该软件包)
+#             许可证类型：
+#                       main : 本身是自由软件，且所有依赖的包也都是自由软件，此类可称纯自由软件。
+#                       contrib : 本身是自由软件，但依赖某些非自由软件包，即依赖中至少有一个软件包属于 contrib 或 non-free。
+#                       non-free : 本身并非自由软件，无论依赖如何。当然，该软件是可免费使用或试用的。
+
+
+# deb http://security.debian.org/debian-security bullseye/updates main contrib
+# deb-src http://security.debian.org/debian-security bullseye/updates main contrib
+
+deb https://mirrors.ustc.edu.cn/debian/ bullseye main contrib non-free
+deb-src https://mirrors.ustc.edu.cn/debian/ bullseye main contrib non-free
+
+deb https://mirrors.ustc.edu.cn/debian/ bullseye-updates main contrib non-free
+deb-src https://mirrors.ustc.edu.cn/debian/ bullseye-updates main contrib non-free
+
+# deb https://mirrors.ustc.edu.cn/debian-security/ bullseye/updates main contrib non-free
+# deb-src https://mirrors.ustc.edu.cn/debian-security/ bullseye/updates main contrib non-free
+
+
+# deb https://mirrors.ustc.edu.cn/debian/ bullseye-backports main contrib non-free
+# deb-src https://mirrors.ustc.edu.cn/debian/ bullseye-backports main contrib non-free
+
+# deb https://mirrors.ustc.edu.cn/debian bullseye-proposed-updates main contrib non-free
+# deb-src https://mirrors.ustc.edu.cn/debian bullseye-proposed-updates main contrib non-free
+# deb cdrom:[Debian GNU/Linux bullseye-DI-rc2 _bullseye_ - Official Snapshot amd64 DVD Binary-1 20170201-11:49]/ bullseye contrib main
+# deb http://mirrors.ustc.edu.cn/debian/ bullseye main
+# deb-src http://mirrors.ustc.edu.cn/debian/ bullseye main
+
+# wine
+# deb https://dl.winehq.org/wine-builds/debian/ bullseye main
+# deb https://mirrors.ustc.edu.cn/debian/ bullseye-backports main
