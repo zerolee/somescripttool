@@ -210,4 +210,5 @@ fi
 export FZF_DEFAULT_COMMAND='fd --type file'
 
 [ -f ~/bin/mycentos-completion.sh ] && source ~/bin/mycentos-completion.sh
+[ -f ~/bin/centosvm-completion.sh ] && source ~/bin/centosvm-completion.sh
 [ -f ~/bin/video-completion.sh ] && source ~/bin/video-completion.sh

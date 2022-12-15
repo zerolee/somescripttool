@@ -6,50 +6,40 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
-# 支持 vbox
+# 支持 vmware
 ################################
 # 变量定义区
 ################################
 
-vmsUUID="f11cedbd-cdc8-4b23-822e-b7eaec14d693" # vbox
-vms=$(VBoxManage list runningvms)
-existvms=$(VBoxManage list runningvms|sed 's/.*{//g'|sed 's/}//g')
-statvms=$(VBoxManage showvminfo centos|grep -i state|cut -d':' -f2|awk  '{print $1}')
-
-
-
+existvms=$(vmrun list|grep centos)
 
 ################################
 # 函数定义区
 ################################
 # 开机
 function boot() {
-    if [ "${existvms}" != "${vmsUUID}" ]; then
+    if [ -z ${existvms} ]; then
         echo "boot..."
-        VBoxManage startvm centos -type headless &> /dev/null
-        while [ "${existvms}" != "${vmsUUID}" ]
+        vmrun start "/home/zmqc/backups/vmware/centos/centos.vmx" nogui
+        while [ -z ${existvms} ]
         do
             sleep 1
-            existvms=$(VBoxManage list runningvms|sed 's/.*{//g'|sed 's/}//g')
+            existvms=$(vmrun list|grep centos)
         done
     fi
-}
 
-# 虚拟机信息
-function info() {
-    echo "vms info: "${vms:-"没有虚拟机"}
 }
 
 # 远程链接
 function connect() {
     echo "connect..."
-    ssh 192.168.56.4
+    ssh 192.168.56.128
 }
 
 
 # 测试是否可以连接
 function testip() {
-    if [ "${existvms}" != "${vmsUUID}" ]; then
+    if [ -z ${existvms} ]; then
         echo "虚拟机未启动"
         exit 0
     fi
@@ -57,7 +47,7 @@ function testip() {
     result="1"
     while [ "${result}" != "0" ]
     do
-        ping -c 1 -w 1 192.168.56.4 &> /dev/null && result=0 || result=1
+        ping -c 1 -w 1 192.168.56.128 &> /dev/null && result=0 || result=1
         sleep 0.3
     done
     success="虚拟机已经启动"
@@ -66,14 +56,11 @@ function testip() {
 # 帮助信息
 function help() {
     echo -e "\
-     help     ( 查看 mycentos 的参数介绍 )\n\
+     help     ( 查看 centosvm 的参数介绍 )\n\
      ls       ( 查看有哪些虚拟机 ) \n\
      boot     ( 启动虚拟机 )\n\
      ssh      ( 用ssh进行远程连接 )\n\
-     status   ( 查看虚拟机是否启动 )\n\
      ping     ( ping 一下虚拟机的网络 )\n\
-     pause    ( 暂停虚拟机 )\n\
-     resume   ( 恢复暂停虚拟机 )\n\
      ss       ( savestate 保存状态然后关闭 )\n\
      shutdown ( 关机 )\n\
      poweroff ( 强制关机 )"
@@ -86,15 +73,7 @@ function help() {
 # 不带任何参数则直接启动
 if [ $# == 0 ]; then
     boot
-    # 虚拟机已经启动了，但是被暂停了
-    if [ "${statvms}" == "paused" ]; then
-        VBoxManage controlvm centos resume
-    fi
     testip
-    # 网络可以连通后，ssh 服务还没有完全启动
-    if [ "${statvms}" == "powered" ]; then
-        sleep 1
-    fi
     connect
     exit
 elif [ $# != 1 ]; then
@@ -110,7 +89,7 @@ case $1 in
         help
         ;;
     "ls")
-        info
+        vmrun list
         ;;
     "boot")
         boot
@@ -119,26 +98,16 @@ case $1 in
         connect
         ;;
     "ping")
-        ping -c 1 -w 1 192.168.56.4
-        ;;
-    "status")
-        testip
-        echo $success
-        ;;
-    "pause")
-        VBoxManage controlvm centos pause
-        ;;
-    "resume")
-        VBoxManage controlvm centos resume
+        ping -c 1 -w 1 192.168.56.128
         ;;
     "ss")
-        VBoxManage controlvm centos savestate
+        vmrun suspend "/home/zmqc/backups/vmware/centos/centos.vmx"
         ;;
     "shutdown")
-        VBoxManage controlvm centos acpipowerbutton
+        vmrun stop "/home/zmqc/backups/vmware/centos/centos.vmx" soft
         ;;
     "poweroff")
-        VBoxManage controlvm centos poweroff
+        vmrun stop "/home/zmqc/backups/vmware/centos/centos.vmx" hard
         ;;
     *)
         echo "     参数错误"
